@@ -62,11 +62,5 @@ def parse_opt():
         type=int,
         help="The rounds of the federated learning"
     )
-    parse.add_argument(
-        '--aggr',
-        default='avg',
-        type=str,
-        help="Aggregation mode"
-    )
     args = parse.parse_args()
     return args
