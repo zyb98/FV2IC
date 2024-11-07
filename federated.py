@@ -79,13 +79,6 @@ def train():
         dice1 = 0.0
         dice2 = 0.0
         dice3 = 0.0
-        jaccard1 = 0.0
-        jaccard2 = 0.0
-        jaccard3 = 0.0
-        sensitive1 = 0.0
-        sensitive2 = 0.0
-        sensitive3 = 0.0
-        accuracy = 0.0
 
 
         with torch.no_grad():
@@ -223,8 +216,8 @@ def test():
     device = torch.device("cuda:0" if torch.cuda.is_available else "cpu")
     global_model = UNet2D(1, 4, final_sigmoid=False)
     global_generate_model = VAE()
-    global_model.load_state_dict(torch.load("ours_global_model_20%.pth"))
-    global_generate_model.load_state_dict(torch.load("ours_global_generate_model_20%.pth"))
+    global_model.load_state_dict(torch.load("ours_global_model.pth"))
+    global_generate_model.load_state_dict(torch.load("ours_global_generate_model.pth"))
     global_model = global_model.to(device)
     global_generate_model = global_generate_model.to(device)
     test_data = utils.get_train_data_loader(4, 'test_data')
@@ -239,8 +232,7 @@ def test():
     jaccard3 = 0.0
     sensitive1 = 0.0
     sensitive2 = 0.0
-    sensitive3 = 0.0
-    accuracy = 0.0
+    sensitive3 = 0.
 
     all_dice = 0
     all_hd = 0
@@ -285,7 +277,6 @@ def test():
             sensitive2 += Sensitive_Coeff(res, labels, 2) * inputs.size(0)
             sensitive3 += Sensitive_Coeff(res, labels, 3) * inputs.size(0)
 
-            accuracy += Accuracy(res, labels) * inputs.size(0)
             
     avg_valid_loss = valid_loss / sets.test_size
 
@@ -304,13 +295,11 @@ def test():
     avg_valid_sensitive3 = sensitive3 / sets.test_size
     avg_valid_sensitive = (avg_valid_sensitive1 + avg_valid_sensitive2 + avg_valid_sensitive3) / 3
 
-    avg_valid_accuracy = accuracy / sets.test_size
-
     avg_hd = all_hd / sets.test_size
 
     
-    print("Test: Loss: {:.4f} Dice: {:.4f}, Jaccard: {:.4f}, Sensitive: {:.4f}, Accuracy: {:.4f}, HD95: {:.4f}".format(
-        avg_valid_loss, avg_valid_dice, avg_valid_jaccard, avg_valid_sensitive, avg_valid_accuracy, avg_hd))
+    print("Test: Loss: {:.4f} Dice: {:.4f}, Jaccard: {:.4f}, Sensitive: {:.4f}, HD95: {:.4f}".format(
+        avg_valid_loss, avg_valid_dice, avg_valid_jaccard, avg_valid_sensitive, avg_hd))
 
 
 
